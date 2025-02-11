@@ -154,7 +154,43 @@ const intersectObjectsNames = [
 
 let intersectObject = ""
 
-const loader = new GLTFLoader();
+// Loading screen and loading manager
+const loadingScreen = document.getElementById("loadingScreen")
+const loadingText = document.querySelector(".loading-text")
+const enterButton = document.querySelector(".enter-button")
+const instructions = document.querySelector(".instructions")
+
+const manager = new THREE.LoadingManager()
+
+manager.onLoad = function () {
+    const t1 = gsap.timeline();
+  
+    t1.to(loadingText, {
+        opacity: 0,
+        duration: 0,
+    });
+  
+    t1.to(enterButton, {
+        opacity: 1,
+        duration: 0,
+    });
+};
+  
+enterButton.addEventListener("click", () => {
+    gsap.to(loadingScreen, {
+        opacity: 0,
+        duration: 0,
+    });
+    gsap.to(instructions, {
+        opacity: 0,
+        duration: 0,
+        onComplete: () => {
+            loadingScreen.remove();
+        },
+    });
+});
+
+const loader = new GLTFLoader(manager);
 
 loader.load( './Portfolio.glb', function ( glb ) {
 	glb.scene.traverse((child) => {
@@ -164,8 +200,6 @@ loader.load( './Portfolio.glb', function ( glb ) {
         if(child.isMesh){
             child.castShadow = true
             child.receiveShadow = true
-            // console.log(child.material.color)
-
         }
 
         if(child.name === "Character"){
