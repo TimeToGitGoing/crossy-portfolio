@@ -1,5 +1,4 @@
 import * as THREE from 'three'
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js'
 import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js'
 import { Octree } from 'three/addons/math/Octree.js'
 import { Capsule } from 'three/addons/math/Capsule.js'
@@ -18,7 +17,7 @@ const GRAVITY = 30
 const CAPSULE_RADIUS = 0.35
 const CAPSULE_HEIGHT = 1
 const JUMP_HEIGHT = 10
-const MOVE_SPEED = 7
+const MOVE_SPEED = 6
 
 let character = {
     instance: null,
@@ -98,6 +97,8 @@ const intersectObjectsNames = [
     "Bull",
     "Chicken",
     "Dropbear",
+    "Sylveon",
+    "Squirtle"
 ]
 
 let intersectObject = ""
@@ -115,17 +116,18 @@ loader.load( './Portfolio.glb', function ( glb ) {
         }
 
         if(child.name === "Character"){
-            character.instance = child
-        }
-        if(child.name === "collision"){
             character.spawnPosition.copy(child.position)
-            colliderOctree.fromGraphNode(child)
+            character.instance = child
             playerCollider.start
                 .copy(child.position)
                 .add(new THREE.Vector3(0, CAPSULE_RADIUS, 0))
             playerCollider.end
                 .copy(child.position)
                 .add(new THREE.Vector3(0, CAPSULE_HEIGHT, 0))
+        }
+        if(child.name === "collision"){
+            colliderOctree.fromGraphNode(child)
+            child.visible = false
         }
     })
     scene.add( glb.scene )
@@ -146,12 +148,6 @@ sun.shadow.camera.bottom = -100
 sun.shadow.normalBias = 0.2
 scene.add( sun )
 
-const shadowHelper = new THREE.CameraHelper( sun.shadow.camera );
-scene.add( shadowHelper );
-
-const helper = new THREE.DirectionalLightHelper( sun, 5 )
-scene.add( helper )
-
 const light = new THREE.AmbientLight( 0x404040, 3 )
 scene.add( light )
 
@@ -169,8 +165,9 @@ camera.position.x = 73
 camera.position.y = 36
 camera.position.z = -43
 
-const controls = new OrbitControls( camera, canvas );
-controls.update()
+const cameraOffset = new THREE.Vector3(73, 36, -43)
+camera.zoom = 2.5
+camera.updateProjectionMatrix()
 
 function onResize(){
     sizes.width = window.innerWidth
@@ -260,7 +257,7 @@ function jumpCharacter(meshID){
 
 function onClick(){
     if(intersectObject !==""){
-        if (["Bull","Chicken","Dropbear"].includes(intersectObject)){
+        if (["Bull","Chicken","Dropbear","Sylveon","Squirtle"].includes(intersectObject)){
             jumpCharacter(intersectObject)
         } else {
             showModal(intersectObject)
@@ -362,6 +359,20 @@ window.addEventListener("keydown", onKeyDown)
 
 function animate() {
     updatePlayer()
+
+    if(character.instance){
+        const targetCameraPosition = new THREE.Vector3(
+            character.instance.position.x + cameraOffset.x, 
+            cameraOffset.y, 
+            character.instance.position.z + cameraOffset.z
+        )
+        camera.position.copy(targetCameraPosition)
+        camera.lookAt(
+            character.instance.position.x,
+            camera.position.y - 39,
+            character.instance.position.z
+        )
+    }
 
     // update the picking ray with the camera and pointer position
     raycaster.setFromCamera( pointer, camera );
