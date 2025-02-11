@@ -149,7 +149,8 @@ const intersectObjectsNames = [
     "Chicken",
     "Dropbear",
     "Sylveon",
-    "Squirtle"
+    "Squirtle",
+    "Slowbro"
 ]
 
 let intersectObject = ""
@@ -344,7 +345,7 @@ function jumpCharacter(meshID){
 
 function onClick(){
     if(intersectObject !==""){
-        if (["Bull","Chicken","Dropbear","Sylveon","Squirtle"].includes(intersectObject)){
+        if (["Bull","Chicken","Dropbear","Sylveon","Squirtle","Slowbro"].includes(intersectObject)){
             jumpCharacter(intersectObject)
         } else {
             showModal(intersectObject)
