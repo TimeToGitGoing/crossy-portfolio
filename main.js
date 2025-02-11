@@ -36,6 +36,7 @@ const playerCollider = new Capsule(
 let playerVelocity = new THREE.Vector3()
 let playerOnFloor = false
 
+// Renderer
 const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true })
 renderer.setSize( sizes.width, sizes.height )
 renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
@@ -44,6 +45,56 @@ renderer.shadowMap.enabled = true
 renderer.toneMapping = THREE.ACESFilmicToneMapping
 renderer.toneMappingExposure = 1.75
 
+// Toggle theme night and day mode
+const themeToggleButton = document.querySelector(".theme-mode-toggle-button")
+const firstIcon = document.querySelector(".first-icon")
+const secondIcon = document.querySelector(".second-icon")
+
+function toggleTheme(){
+    const isDarkTheme = document.body.classList.contains("dark-theme")
+    document.body.classList.toggle("dark-theme")
+    document.body.classList.toggle("light-theme")
+
+    if (firstIcon.style.display === "none") {
+        firstIcon.style.display = "block"
+        secondIcon.style.display = "none"
+    } else {
+        firstIcon.style.display = "none"
+        secondIcon.style.display = "block"
+    }
+
+    gsap.to(light.color, {
+        r: isDarkTheme ? 1.0 : 0.25,
+        g: isDarkTheme ? 1.0 : 0.31,
+        b: isDarkTheme ? 1.0 : 0.78,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    
+      gsap.to(light, {
+        intensity: isDarkTheme ? 0.8 : 0.9,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    
+      gsap.to(sun, {
+        intensity: isDarkTheme ? 1 : 0.8,
+        duration: 1,
+        ease: "power2.inOut",
+      });
+    
+      gsap.to(sun.color, {
+        r: isDarkTheme ? 1.0 : 0.25,
+        g: isDarkTheme ? 1.0 : 0.41,
+        b: isDarkTheme ? 1.0 : 0.88,
+        duration: 1,
+        ease: "power2.inOut",
+    });
+}
+
+themeToggleButton.addEventListener("click", toggleTheme)
+
+// Modal 
 const modalContent = {
     Lepetit:{
         title: "Le Petit Society",
@@ -113,6 +164,8 @@ loader.load( './Portfolio.glb', function ( glb ) {
         if(child.isMesh){
             child.castShadow = true
             child.receiveShadow = true
+            // console.log(child.material.color)
+
         }
 
         if(child.name === "Character"){

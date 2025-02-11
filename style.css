@@ -5,6 +5,19 @@
     font-family: "Chakra Petch";
 }
 
+:root {
+    --pastel-pink: #ad8671;
+    --pastel-blue: #717dad;
+}
+
+.light-theme {
+    --default-bg: var(--pastel-pink)
+}
+
+.dark-theme {
+    --default-bg: var(--pastel-blue)
+}
+
 
 /* Experience */
 #experience{
@@ -49,4 +62,29 @@
     display: flex;
     flex-direction: row;
     justify-content: space-between;
+}
+
+/* Toggle Theme button */
+.theme-mode-toggle-button {
+    z-index: 500;
+    position: absolute;
+    top: 32px;
+    right: 32px;
+    background: var(--default-bg);
+    height: 48px;
+    width: 48px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid white;
+    border-radius: 50%;
+    padding: 4px;
+    cursor: pointer;
+    transition: background 0.4s ease-in;
+    transition-delay: 0.1s;
+    background-color: white
+}
+
+.second-icon {
+    display: none;
 }
