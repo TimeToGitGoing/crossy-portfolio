@@ -500,29 +500,26 @@ function handleContinuousMovement() {
         Object.values(pressedButtons).some((pressed) => pressed) &&
         !character.isMoving
     ) {
-        if (!isMuted) {
-        playSound("jumpSFX");
-        }
         if (pressedButtons.up) {
-        playerVelocity.z += MOVE_SPEED;
-        targetRotation = 0;
+        playerVelocity.x -= MOVE_SPEED
+        targetRotation = Math.PI
         }
         if (pressedButtons.down) {
-        playerVelocity.z -= MOVE_SPEED;
-        targetRotation = Math.PI;
+        playerVelocity.x += MOVE_SPEED
+        targetRotation = 0
         }
         if (pressedButtons.left) {
-        playerVelocity.x += MOVE_SPEED;
-        targetRotation = Math.PI / 2;
+        playerVelocity.z += MOVE_SPEED
+        targetRotation = -Math.PI / 2
         }
         if (pressedButtons.right) {
-        playerVelocity.x -= MOVE_SPEED;
-        targetRotation = -Math.PI / 2;
+        playerVelocity.z -= MOVE_SPEED
+        targetRotation = Math.PI / 2
         }
 
-        playerVelocity.y = JUMP_HEIGHT;
-        character.isMoving = true;
-        handleJumpAnimation();
+        playerVelocity.y = JUMP_HEIGHT
+        character.isMoving = true
+        handleJumpAnimation()
     }
 }
 
@@ -571,6 +568,7 @@ window.addEventListener("keydown", onKeyDown)
 
 function animate() {
     updatePlayer()
+    handleContinuousMovement()
 
     if(character.instance){
         const targetCameraPosition = new THREE.Vector3(
