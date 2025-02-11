@@ -438,6 +438,131 @@ function onKeyDown(event){
     character.isMoving = true
 }
 
+// Mobiles controls
+const mobileControls = {
+    up: document.querySelector(".mobile-control.up-arrow"),
+    left: document.querySelector(".mobile-control.left-arrow"),
+    right: document.querySelector(".mobile-control.right-arrow"),
+    down: document.querySelector(".mobile-control.down-arrow"),
+}
+
+const pressedButtons = {
+    up: false,
+    left: false,
+    right: false,
+    down: false,
+}
+
+function handleJumpAnimation() {
+    if (!character.instance || !character.isMoving) return;
+  
+    const jumpDuration = 0.5;
+    const jumpHeight = 2;
+  
+    const t1 = gsap.timeline();
+  
+    t1.to(character.instance.scale, {
+      x: 1.08,
+      y: 0.9,
+      z: 1.08,
+      duration: jumpDuration * 0.2,
+      ease: "power2.out",
+    });
+  
+    t1.to(character.instance.scale, {
+      x: 0.92,
+      y: 1.1,
+      z: 0.92,
+      duration: jumpDuration * 0.3,
+      ease: "power2.out",
+    });
+  
+    t1.to(character.instance.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      duration: jumpDuration * 0.3,
+      ease: "power1.inOut",
+    });
+  
+    t1.to(character.instance.scale, {
+      x: 1,
+      y: 1,
+      z: 1,
+      duration: jumpDuration * 0.2,
+    })
+}
+
+function handleContinuousMovement() {
+    if (!character.instance) return;
+  
+    if (
+        Object.values(pressedButtons).some((pressed) => pressed) &&
+        !character.isMoving
+    ) {
+        if (!isMuted) {
+        playSound("jumpSFX");
+        }
+        if (pressedButtons.up) {
+        playerVelocity.z += MOVE_SPEED;
+        targetRotation = 0;
+        }
+        if (pressedButtons.down) {
+        playerVelocity.z -= MOVE_SPEED;
+        targetRotation = Math.PI;
+        }
+        if (pressedButtons.left) {
+        playerVelocity.x += MOVE_SPEED;
+        targetRotation = Math.PI / 2;
+        }
+        if (pressedButtons.right) {
+        playerVelocity.x -= MOVE_SPEED;
+        targetRotation = -Math.PI / 2;
+        }
+
+        playerVelocity.y = JUMP_HEIGHT;
+        character.isMoving = true;
+        handleJumpAnimation();
+    }
+}
+
+Object.entries(mobileControls).forEach(([direction, element]) => {
+    element.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        pressedButtons[direction] = true;
+    })
+  
+    element.addEventListener("touchend", (e) => {
+        e.preventDefault();
+        pressedButtons[direction] = false;
+    })
+  
+    element.addEventListener("mousedown", (e) => {
+        e.preventDefault();
+        pressedButtons[direction] = true;
+    })
+  
+    element.addEventListener("mouseup", (e) => {
+        e.preventDefault();
+        pressedButtons[direction] = false;
+    })
+  
+    element.addEventListener("mouseleave", (e) => {
+        pressedButtons[direction] = false;
+    })
+  
+    element.addEventListener("touchcancel", (e) => {
+        pressedButtons[direction] = false;
+    })
+})
+  
+window.addEventListener("blur", () => {
+    Object.keys(pressedButtons).forEach((key) => {
+        pressedButtons[key] = false;
+    })
+})
+
+
 modalExitButton.addEventListener("click", hideModal)
 window.addEventListener("resize", onResize)
 window.addEventListener("click", onClick)

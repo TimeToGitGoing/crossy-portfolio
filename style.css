@@ -151,3 +151,45 @@
     align-items: center;
     justify-content: center;
 }
+
+/* Mobile controls */
+.mobile-control {
+    z-index: 500;
+    position: absolute;
+    top: 85%;
+    left: 50%;
+    cursor: pointer;
+    transform: translate(-50%, -50%);
+    background: var(--default-bg);
+    height: 64px;
+    width: 64px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    border: 3px solid white;
+    padding: 8px;
+    transition: background 0.4s ease-in;
+    transition-delay: 0.1s;
+}
+  
+.left-arrow {
+    transform: translate(calc(-100% - 32px), -50%);
+}
+  
+.right-arrow {
+    transform: translate(32px, -50%);
+}
+  
+.up-arrow {
+    transform: translate(-50%, calc(-100% - 32px));
+}
+  
+.down-arrow {
+    transform: translate(-50%, 32px);
+}
+
+@media (max-width: 1100px) {
+    .mobile-control {
+        display: flex;
+    }
+}
